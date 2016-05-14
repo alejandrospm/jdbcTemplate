@@ -15,7 +15,7 @@ public class CounterIncrementerDefault {
 	@Autowired
 	private JEStatsDao jEStatsDao;
 	
-	private static final long MAX_HEADER_COUNTER_VALUE = 1_500;
+	public static final long MAX_HEADER_COUNTER_VALUE = 1_500;
 
 	public long getHeaderCounter() {
 		
