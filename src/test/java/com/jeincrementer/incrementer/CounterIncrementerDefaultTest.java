@@ -32,7 +32,7 @@ public class CounterIncrementerDefaultTest {
 	}
 	
 	@Test
-	public void getHeaderCounterAugmentedByOne(){
+	public void getHeaderCounterIncrementedByOne(){
 		
 		JEStats currentJEStats = jEStatsDao.getFirstElement();
 		long  currentHeaderCounterValue = currentJEStats.getHeaderCounter();
@@ -53,5 +53,28 @@ public class CounterIncrementerDefaultTest {
 		long newHeaderCounter = toTest.getLineCounter();
 		assertThat(newHeaderCounter, equalTo(1L));
 	}
+	
+	@Test
+	public void getLineCounterIncrementedByOne(){
+		
+		JEStats jeStats = jEStatsDao.getFirstElement();
+		long currentLineCounter = jeStats.getLineCounter();
+		long newLineCounter = toTest.getLineCounter();
+		assertThat(newLineCounter, equalTo(currentLineCounter + 1));
+	}
 
+	@Test
+	public void resetLineCounterWhenHeaderCounterIsIncremented(){
+		
+		JEStats jeStats = jEStatsDao.getFirstElement();
+		long currentHeaderCounter = jeStats.getHeaderCounter();
+		
+		toTest.getHeaderCounter();
+		
+		jeStats = jEStatsDao.getFirstElement();
+		long newHeaderCounter = jeStats.getHeaderCounter();
+		
+		assertThat(jeStats.getLineCounter(), equalTo(1L));
+		assertThat(newHeaderCounter, equalTo(currentHeaderCounter + 1));
+	}
 }
