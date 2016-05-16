@@ -13,7 +13,7 @@ public class JEStatsDao implements GenericDao<JEStats> {
 	private JdbcTemplate jdbcTemplate;
 	
 	private static final String JE_STATS_INSERT_QUERY = "INSERT INTO JE_STATS (HEADER_CNT, LINE_CNT) VALUES (?,?)";
-	private static final String JE_STATS_SELECT_FIRST_QUERY = "SELECT * FROM JE_STATS LIMIT 1";
+	private static final String JE_STATS_SELECT_FIRST_QUERY = "SELECT HEADER_CNT, LINE_CNT FROM JE_STATS LIMIT 1";
 	private static final String JE_STATS_UPDATE_COUNTERS_QUERY = "UPDATE JE_STATS SET HEADER_CNT = ?, LINE_CNT = ? LIMIT 1";
 
 	public JEStats create(final JEStats jEStats) {
