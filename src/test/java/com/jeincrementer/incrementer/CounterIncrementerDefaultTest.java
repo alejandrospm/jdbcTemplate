@@ -80,17 +80,4 @@ public class CounterIncrementerDefaultTest {
 		long newLineCounter = toTest.getLineCounter();
 		assertThat(newLineCounter, equalTo(currentLineCounter + 1));
 	}
-
-	@Test
-	public void resetLineCounterWhenHeaderCounterIsIncremented(){
-		
-		JEStats jeStatsMock = new JEStats(1, 4);
-		when(jEStatsDao.getFirstElement()).thenReturn(jeStatsMock);
-		long currentHeaderCounter = jeStatsMock.getHeaderCounter();
-		
-		long newHeaderCounter = toTest.getHeaderCounter();
-		
-		assertThat(jeStatsMock.getLineCounter(), equalTo(1L));
-		assertThat(newHeaderCounter, equalTo(currentHeaderCounter + 1));
-	}
 }
