@@ -22,7 +22,6 @@ public class CounterIncrementerDefault {
 		JEStats jeStats = getJEStatsFirstObjectFromPersistence();
 		long newHeaderCounter = getNewHeaderCounter(jeStats.getHeaderCounter());
 		jeStats.setHeaderCounter(newHeaderCounter);
-		jeStats.setLineCounter(1); //resets the line counter
 		jEStatsDao.update(jeStats);
 		return newHeaderCounter;
 	}

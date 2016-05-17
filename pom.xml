@@ -20,10 +20,12 @@
 
 		<!-- JUnit -->
 		<junit-version>4.11</junit-version>
-		
+
 		<!-- Mockito -->
 		<mockito-version>1.10.19</mockito-version>
-
+		
+		<!-- H2 driver version -->
+		<dbh2.version>1.4.187</dbh2.version>
 	</properties>
 
 	<dependencies>
@@ -83,6 +85,20 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>${mockito-version}</version>
+		</dependency>
+		
+		<!-- http://mvnrepository.com/artifact/org.springframework/spring-test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+		
+		<!-- H2 DB -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${dbh2.version}</version>
 		</dependency>
 	</dependencies>
 </project>

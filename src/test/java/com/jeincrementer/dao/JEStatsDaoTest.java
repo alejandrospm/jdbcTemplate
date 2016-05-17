@@ -2,75 +2,79 @@ package com.jeincrementer.dao;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.jeincrementer.model.JEStats;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:spring_test.xml"})
 public class JEStatsDaoTest {
 
-	@InjectMocks
+	@Autowired
 	private JEStatsDao toTest;
 	
-	@Mock(name="jdbcTemplate")
+	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	private static final String JE_STATS_INSERT_QUERY = "INSERT INTO JE_STATS (HEADER_CNT, LINE_CNT) VALUES (?,?)";
-	private static final String JE_STATS_UPDATE_COUNTERS_QUERY = "UPDATE JE_STATS SET HEADER_CNT = ?, LINE_CNT = ? LIMIT 1";
-	private static final String JE_STATS_SELECT_FIRST_QUERY = "SELECT * FROM JE_STATS LIMIT 1";
+	
+	private static final long HEADER_FIRST_ELEMENT = 2L;
+	private static final long LINE_FIRST_ELEMENT = 3L;
+	private static final String JE_INSERT_QUERY = "INSERT INTO JE_STATS (HEADER_CNT, LINE_CNT) VALUES (?,?)";
+	private static final String JE_TRUNCATE_QUERY = "TRUNCATE TABLE JE_STATS";
 	
 	@Before
 	public void setup(){
-		MockitoAnnotations.initMocks(this);
+		insertFirstDataInTestTable(HEADER_FIRST_ELEMENT, LINE_FIRST_ELEMENT);
 	}
 	
-	@Test
-	public void shouldInsertARegistryOfJEStats(){
-		JEStats jeStats = new JEStats(1,1);
-		when(jdbcTemplate.update(anyString(), any(Object[].class))).thenReturn(1);
-		toTest.create(jeStats);
-		verify(jdbcTemplate, times(1)).update(JE_STATS_INSERT_QUERY, new Object[]{1L, 1L});
+	@After
+	public void tearDown(){
+		truncateTableJEStats();
+	}
+
+	private void insertFirstDataInTestTable(long headerCounter, long lineCounter){
+		jdbcTemplate.update(JE_INSERT_QUERY, headerCounter, lineCounter);	
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldUpdateAnEntityJEStats() {
-
-		JEStats jeStats = new JEStats(5,10);
-		when(jdbcTemplate.update(anyString(), any(Object[].class))).thenReturn(1);
-		when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class))).thenReturn(jeStats);
-		JEStats jeStatsUpdated = toTest.update(jeStats);
-		verify(jdbcTemplate, times(1)).update(JE_STATS_UPDATE_COUNTERS_QUERY, new Object[]{5L, 10L});
-		assertThat(jeStatsUpdated.getHeaderCounter(), equalTo(jeStats.getHeaderCounter()));
-		assertThat(jeStatsUpdated.getLineCounter(), equalTo(jeStats.getLineCounter()));
+	private void truncateTableJEStats() {
+		jdbcTemplate.execute(JE_TRUNCATE_QUERY);
 	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldGetThFirstRegistryOfJEStats() throws SQLException{
-		
-		JEStats jeStats = new JEStats(1,1);
-		ResultSet resultSetMock = mock(ResultSet.class);
-		when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class))).thenReturn(jeStats);
-		when(resultSetMock.getLong(1)).thenReturn(1L);
-		when(resultSetMock.getLong(2)).thenReturn(1L);
+	
+	@Test(expected=DataAccessException.class)
+	public void shouldThrowDataAccessExceptionBecauseDoesNotExistAnyData(){
+		truncateTableJEStats();
 		toTest.getFirstElement();
 	}
 	
+	@Test
+	public void shouldInsertAJEStatsDataInTheTable(){
+		truncateTableJEStats();
+		JEStats jeStats = toTest.create(new JEStats(2L, 3L));
+		assertThat(jeStats.getHeaderCounter(), equalTo(HEADER_FIRST_ELEMENT));
+		assertThat(jeStats.getLineCounter(), equalTo(LINE_FIRST_ELEMENT));
+	}
+	@Test
+	public void shouldReturnFirstElementInTheTableJEStats(){
+		JEStats jeStatsRetrieved = toTest.getFirstElement();
+		assertThat(jeStatsRetrieved.getHeaderCounter(), equalTo(HEADER_FIRST_ELEMENT));
+		assertThat(jeStatsRetrieved.getLineCounter(), equalTo(LINE_FIRST_ELEMENT));
+	}
+	
+	@Test
+	public void shouldUpdateFirstJEStatsDataInDatabase(){
+		JEStats jeStatsUpdated =  new JEStats(HEADER_FIRST_ELEMENT + 1, LINE_FIRST_ELEMENT +1);
+		JEStats jeStatsRetrieved = toTest.update(jeStatsUpdated);
+		JEStats first = toTest.getFirstElement();
+		assertThat(jeStatsRetrieved.getHeaderCounter(), equalTo(HEADER_FIRST_ELEMENT+1));
+		assertThat(jeStatsRetrieved.getLineCounter(), equalTo(LINE_FIRST_ELEMENT+1));
+	}
 }
