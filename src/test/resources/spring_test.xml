@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	
-    xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context
@@ -13,20 +10,29 @@
 		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
 	<context:component-scan base-package="com.jeincrementer" />
-	
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-        <property name="driverClass" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1;AUTO_RECONNECT=TRUE"/>
-        <property name="username" value="skylab"/>
-        <property name="password" value=""/>
-    </bean>
-	
-	<bean id="jdbcTemplateTest" class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="dataSource"/>
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:/db/h2/sql_test_sentences.properties</value>
+			</list>
+		</property>
 	</bean>
-	
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="org.h2.Driver" />
+		<property name="url"
+			value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1;AUTO_RECONNECT=TRUE" />
+		<property name="username" value="skylab" />
+		<property name="password" value="" />
+	</bean>
+
+	<bean id="jdbcTemplateTest" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
 	<jdbc:initialize-database>
-        <jdbc:script location="classpath:db/h2/create_db_test.sql"/>
-    </jdbc:initialize-database>
+		<jdbc:script location="classpath:db/h2/create_db_test.sql" />
+	</jdbc:initialize-database>
 
 </beans>

@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,8 +29,9 @@ public class JEStatsDaoTest {
 	
 	private static final long HEADER_FIRST_ELEMENT = 2L;
 	private static final long LINE_FIRST_ELEMENT = 3L;
-	private static final String JE_INSERT_QUERY = "INSERT INTO JE_STATS (HEADER_CNT, LINE_CNT) VALUES (?,?)";
-	private static final String JE_TRUNCATE_QUERY = "TRUNCATE TABLE JE_STATS";
+	@Value("${sql.insert_first}")
+	private String JE_INSERT_QUERY;
+	private String JE_TRUNCATE_QUERY = "TRUNCATE TABLE JE_STATS";
 	
 	@Before
 	public void setup(){
@@ -73,7 +75,6 @@ public class JEStatsDaoTest {
 	public void shouldUpdateFirstJEStatsDataInDatabase(){
 		JEStats jeStatsUpdated =  new JEStats(HEADER_FIRST_ELEMENT + 1, LINE_FIRST_ELEMENT +1);
 		JEStats jeStatsRetrieved = toTest.update(jeStatsUpdated);
-		JEStats first = toTest.getFirstElement();
 		assertThat(jeStatsRetrieved.getHeaderCounter(), equalTo(HEADER_FIRST_ELEMENT+1));
 		assertThat(jeStatsRetrieved.getLineCounter(), equalTo(LINE_FIRST_ELEMENT+1));
 	}

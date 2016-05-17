@@ -11,13 +11,13 @@ public class CustomBeaPostProcessor implements BeanPostProcessor {
 
 	
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		System.out.println("Before Bean ''" + "created : " + bean.getClass().getSimpleName());
+//		System.out.println("Before Bean ''" + "created : " + bean.getClass().getSimpleName());
 		return bean;
 	}
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		System.out.println("After Bean ''" + "created : " + bean.getClass().getSimpleName());
+//		System.out.println("After Bean ''" + "created : " + bean.getClass().getSimpleName());
 		return bean;
 	}
 
