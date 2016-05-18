@@ -30,8 +30,9 @@ public class JEStatsDaoTest {
 	private static final long HEADER_FIRST_ELEMENT = 2L;
 	private static final long LINE_FIRST_ELEMENT = 3L;
 	@Value("${sql.insert_first}")
-	private String JE_INSERT_QUERY;
-	private String JE_TRUNCATE_QUERY = "TRUNCATE TABLE JE_STATS";
+	private String jeInsertQuery;
+	
+	private static final String JE_TRUNCATE_QUERY = "TRUNCATE TABLE JE_STATS";
 	
 	@Before
 	public void setup(){
@@ -44,7 +45,7 @@ public class JEStatsDaoTest {
 	}
 
 	private void insertFirstDataInTestTable(long headerCounter, long lineCounter){
-		jdbcTemplate.update(JE_INSERT_QUERY, headerCounter, lineCounter);	
+		jdbcTemplate.update(jeInsertQuery, headerCounter, lineCounter);	
 	}
 	
 	private void truncateTableJEStats() {

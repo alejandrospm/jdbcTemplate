@@ -14,20 +14,20 @@ public class JEStatsDao implements GenericDao<JEStats> {
 	private JdbcTemplate jdbcTemplate;
 	
 	@Value("${sql.insert_first}")
-	private String JE_STATS_INSERT_QUERY;
+	private String jeStatsInsertQuery;
 	@Value("${sql.select_first}")
-	private String JE_STATS_SELECT_FIRST_QUERY;
+	private String jeStatsSelectFirstQuery;
 	@Value("${sql.update_first}")
 	private String JE_STATS_UPDATE_COUNTERS_QUERY;
 
 	public JEStats create(final JEStats jEStats) {
-		jdbcTemplate.update(JE_STATS_INSERT_QUERY, 
+		jdbcTemplate.update(jeStatsInsertQuery, 
 				new Object[]{jEStats.getHeaderCounter(), jEStats.getLineCounter()});
 		return getFirstElement();
 	}
 
 	public JEStats getFirstElement(){
-		return jdbcTemplate.queryForObject(JE_STATS_SELECT_FIRST_QUERY, 
+		return jdbcTemplate.queryForObject(jeStatsSelectFirstQuery, 
 				(resultSet, number) -> new JEStats(resultSet.getLong(1), resultSet.getLong(2)));
 	}
 
